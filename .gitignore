@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# Raw HTML/JSON cache (re-creatable with `python -m afl.scrape`; not redistributed)
+data/raw/
+
+# Large intermediate (re-creatable with `python -m afl.features`)
+data/processed/features.parquet
+
+# Model training artefacts
+catboost_info/
+*.cbm
+*.txt.model
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
