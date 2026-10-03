@@ -102,12 +102,14 @@ Extreme values were reviewed and kept: they are genuine match performances, not 
 Top disposal games: Sheezel, Harry (North Melbourne, 2025 R24) 54; Dale, Bailey (Western Bulldogs, 2025 R11) 49; Gulden, Errol (Sydney, 2026 R24) 47; Neale, Lachie (Brisbane Lions, 2021 RQualifying Final) 46; Serong, Caleb (Fremantle, 2024 R2) 46
 
 - `pct_time_played` outside 0–100: 0.
-- Rows with under 20% time on ground (mostly substitutes and injuries): 602. Kept; time on ground is a model feature via prior-match form, and these rows are flagged in analysis.
+- Rows with under 20% time on ground (mostly substitutes and injuries): 602. Kept as genuine performances; prior time on ground enters the models only through rolling form features.
 
-## 8. Discrepancies investigated
+## 8. Anomalies and how they are handled
 
-- **Essendon v Port Adelaide, 23 Aug 2026 (AFL Tables round 25):** AFL Tables records Port Adelaide 16.9 (105); Squiggle records 16.8 (104). AFL Tables is internally consistent (player behinds + rushed behinds = 9) and agrees with Port Adelaide FC's published match report (16.9 105 to 14.11 95). AFL Tables value kept; this is the single Squiggle mismatch in section 2.
-- **Gold Coast v Essendon, 27 Aug 2025 (Opening Round match postponed by Cyclone Alfred):** AFL Tables marks 2 substitutions for Gold Coast and 3 for Essendon, while match reports describe one substitute each (Rogers for Humphrey; Unwin for Guelfi). Stats are unaffected; the substitution markers are kept as recorded. They only influence the `sub_last_match` flag for a handful of players' next match.
+Handling is rule-based and applied by `python -m afl.clean` after this report is generated (details in `reports/cleaning.json`). No statistic is altered.
+
+- **Score conflict between sources** (rule: any goal/behind/score difference vs Squiggle). One match: Essendon v Port Adelaide, 23 Aug 2026 (AFL Tables round 25). AFL Tables records Port Adelaide 16.9 (105); Squiggle records 16.8 (104). AFL Tables is internally consistent (player behinds + rushed behinds = 9) and agrees with Port Adelaide FC's published match report. **Handling:** AFL Tables values kept; the match and its 46 player rows carry `source_conflict = true` and are excluded from all model evaluation metrics.
+- **Unverifiable substitution markers** (rule: more than one substitute-on marker for a team in a match; AFL rules allow one). One match: Gold Coast v Essendon, 27 Aug 2025 (the Opening Round fixture postponed by Cyclone Alfred). AFL Tables shows 2 and 3 substitutions; match reports describe one per side. **Handling:** `sub_status` set to null (unknown) for every player in that match; statistics untouched. The counts in section 5 are measured before this rule is applied.
 - Finals show 0 Brownlow votes, which is correct: votes are only awarded in home-and-away matches.
 
 ## 9. Brownlow votes per match
