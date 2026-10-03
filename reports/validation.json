@@ -1,0 +1,520 @@
+{
+  "games_per_season": [
+    {
+      "season": 2021,
+      "afltables": 207,
+      "squiggle": 207,
+      "expected": 207,
+      "ok": true
+    },
+    {
+      "season": 2022,
+      "afltables": 207,
+      "squiggle": 207,
+      "expected": 207,
+      "ok": true
+    },
+    {
+      "season": 2023,
+      "afltables": 216,
+      "squiggle": 216,
+      "expected": 216,
+      "ok": true
+    },
+    {
+      "season": 2024,
+      "afltables": 216,
+      "squiggle": 216,
+      "expected": 216,
+      "ok": true
+    },
+    {
+      "season": 2025,
+      "afltables": 216,
+      "squiggle": 216,
+      "expected": 216,
+      "ok": true
+    },
+    {
+      "season": 2026,
+      "afltables": 218,
+      "squiggle": 218,
+      "expected": 218,
+      "ok": true
+    }
+  ],
+  "squiggle_match": {
+    "matches": 1280,
+    "unmatched": 0,
+    "multi_matched": 0,
+    "score_mismatches": 1
+  },
+  "grand_finals": [
+    {
+      "season": 2021,
+      "winner": "Melbourne",
+      "w": 140,
+      "l": 66,
+      "known": [
+        "Melbourne",
+        140,
+        66
+      ],
+      "ok": true
+    },
+    {
+      "season": 2022,
+      "winner": "Geelong",
+      "w": 133,
+      "l": 52,
+      "known": [
+        "Geelong",
+        133,
+        52
+      ],
+      "ok": true
+    },
+    {
+      "season": 2023,
+      "winner": "Collingwood",
+      "w": 90,
+      "l": 86,
+      "known": [
+        "Collingwood",
+        90,
+        86
+      ],
+      "ok": true
+    },
+    {
+      "season": 2024,
+      "winner": "Brisbane Lions",
+      "w": 120,
+      "l": 60,
+      "known": [
+        "Brisbane Lions",
+        120,
+        60
+      ],
+      "ok": true
+    },
+    {
+      "season": 2025,
+      "winner": "Brisbane Lions",
+      "w": 122,
+      "l": 75,
+      "known": [
+        "Brisbane Lions",
+        122,
+        75
+      ],
+      "ok": true
+    },
+    {
+      "season": 2026,
+      "winner": "Brisbane Lions",
+      "w": 96,
+      "l": 89,
+      "known": null,
+      "ok": true
+    }
+  ],
+  "home_and_away_per_team": [
+    {
+      "season": 2021,
+      "mn": 22,
+      "mx": 22,
+      "teams": 18,
+      "expected": 22,
+      "ok": true
+    },
+    {
+      "season": 2022,
+      "mn": 22,
+      "mx": 22,
+      "teams": 18,
+      "expected": 22,
+      "ok": true
+    },
+    {
+      "season": 2023,
+      "mn": 23,
+      "mx": 23,
+      "teams": 18,
+      "expected": 23,
+      "ok": true
+    },
+    {
+      "season": 2024,
+      "mn": 23,
+      "mx": 23,
+      "teams": 18,
+      "expected": 23,
+      "ok": true
+    },
+    {
+      "season": 2025,
+      "mn": 23,
+      "mx": 23,
+      "teams": 18,
+      "expected": 23,
+      "ok": true
+    },
+    {
+      "season": 2026,
+      "mn": 23,
+      "mx": 23,
+      "teams": 18,
+      "expected": 23,
+      "ok": true
+    }
+  ],
+  "minor_premiers": [
+    {
+      "season": 2021,
+      "team": "Melbourne",
+      "pts": 70,
+      "pct": 130.83853083853083,
+      "known": "Melbourne",
+      "ok": true
+    },
+    {
+      "season": 2022,
+      "team": "Geelong",
+      "pts": 72,
+      "pct": 144.22043010752688,
+      "known": "Geelong",
+      "ok": true
+    },
+    {
+      "season": 2023,
+      "team": "Collingwood",
+      "pts": 72,
+      "pct": 126.97095435684648,
+      "known": "Collingwood",
+      "ok": true
+    },
+    {
+      "season": 2024,
+      "team": "Sydney",
+      "pts": 68,
+      "pct": 126.73827020915772,
+      "known": "Sydney",
+      "ok": true
+    },
+    {
+      "season": 2025,
+      "team": "Adelaide",
+      "pts": 72,
+      "pct": 139.32721712538228,
+      "known": "Adelaide",
+      "ok": true
+    },
+    {
+      "season": 2026,
+      "team": "Fremantle",
+      "pts": 76,
+      "pct": 137.21488595438174,
+      "known": null,
+      "ok": true
+    }
+  ],
+  "round_labels": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "Elimination Final",
+    "Grand Final",
+    "Preliminary Final",
+    "Qualifying Final",
+    "Semi Final",
+    "Wildcard Final"
+  ],
+  "player_sum_vs_team_totals": {
+    "kicks": 0,
+    "marks": 0,
+    "handballs": 0,
+    "disposals": 0,
+    "goals": 0,
+    "behinds": 0,
+    "hitouts": 0,
+    "tackles": 0,
+    "rebound_50s": 0,
+    "inside_50s": 0,
+    "clearances": 0,
+    "clangers": 0,
+    "frees_for": 0,
+    "frees_against": 0,
+    "brownlow_votes": 0,
+    "contested_possessions": 0,
+    "uncontested_possessions": 0,
+    "contested_marks": 0,
+    "marks_inside_50": 0,
+    "one_percenters": 0,
+    "bounces": 0,
+    "goal_assists": 0,
+    "team_matches_compared": 2560
+  },
+  "score_rebuild_mismatches": 0,
+  "disposals_ne_kicks_plus_handballs": 0,
+  "players_per_team_match": [
+    {
+      "players": 23,
+      "team_matches": 2560
+    }
+  ],
+  "subs_on_per_team_match": [
+    {
+      "subs": 0,
+      "len": 834
+    },
+    {
+      "subs": 1,
+      "len": 1724
+    },
+    {
+      "subs": 2,
+      "len": 1
+    },
+    {
+      "subs": 3,
+      "len": 1
+    }
+  ],
+  "duplicate_player_match_rows": 0,
+  "duplicate_matches": 0,
+  "unused_substitutes": 400,
+  "unused_substitutes_with_any_stat": 0,
+  "nulls": {
+    "sub_status": 55417,
+    "pct_time_played": 400
+  },
+  "rows": {
+    "matches": 1280,
+    "player_match_rows": 58880,
+    "unique_players": 1124
+  },
+  "career_games_step": [
+    {
+      "d": 1,
+      "len": 57756
+    }
+  ],
+  "brownlow_votes_per_match": [
+    {
+      "season": 2021,
+      "votes": 0,
+      "len": 9
+    },
+    {
+      "season": 2021,
+      "votes": 6,
+      "len": 198
+    },
+    {
+      "season": 2022,
+      "votes": 0,
+      "len": 9
+    },
+    {
+      "season": 2022,
+      "votes": 6,
+      "len": 198
+    },
+    {
+      "season": 2023,
+      "votes": 0,
+      "len": 9
+    },
+    {
+      "season": 2023,
+      "votes": 6,
+      "len": 207
+    },
+    {
+      "season": 2024,
+      "votes": 0,
+      "len": 9
+    },
+    {
+      "season": 2024,
+      "votes": 6,
+      "len": 207
+    },
+    {
+      "season": 2025,
+      "votes": 0,
+      "len": 9
+    },
+    {
+      "season": 2025,
+      "votes": 6,
+      "len": 207
+    },
+    {
+      "season": 2026,
+      "votes": 0,
+      "len": 11
+    },
+    {
+      "season": 2026,
+      "votes": 6,
+      "len": 207
+    }
+  ],
+  "ranges": {
+    "kicks": {
+      "min": 0.0,
+      "max": 39.0
+    },
+    "marks": {
+      "min": 0.0,
+      "max": 20.0
+    },
+    "handballs": {
+      "min": 0.0,
+      "max": 31.0
+    },
+    "disposals": {
+      "min": 0.0,
+      "max": 54.0
+    },
+    "goals": {
+      "min": 0.0,
+      "max": 11.0
+    },
+    "behinds": {
+      "min": 0.0,
+      "max": 7.0
+    },
+    "hitouts": {
+      "min": 0.0,
+      "max": 68.0
+    },
+    "tackles": {
+      "min": 0.0,
+      "max": 20.0
+    },
+    "rebound_50s": {
+      "min": 0.0,
+      "max": 18.0
+    },
+    "inside_50s": {
+      "min": 0.0,
+      "max": 16.0
+    },
+    "clearances": {
+      "min": 0.0,
+      "max": 20.0
+    },
+    "clangers": {
+      "min": 0.0,
+      "max": 15.0
+    },
+    "frees_for": {
+      "min": 0.0,
+      "max": 8.0
+    },
+    "frees_against": {
+      "min": 0.0,
+      "max": 8.0
+    },
+    "brownlow_votes": {
+      "min": 0.0,
+      "max": 3.0
+    },
+    "contested_possessions": {
+      "min": 0.0,
+      "max": 28.0
+    },
+    "uncontested_possessions": {
+      "min": 0.0,
+      "max": 38.0
+    },
+    "contested_marks": {
+      "min": 0.0,
+      "max": 8.0
+    },
+    "marks_inside_50": {
+      "min": 0.0,
+      "max": 11.0
+    },
+    "one_percenters": {
+      "min": 0.0,
+      "max": 25.0
+    },
+    "bounces": {
+      "min": 0.0,
+      "max": 15.0
+    },
+    "goal_assists": {
+      "min": 0.0,
+      "max": 6.0
+    },
+    "pct_time_played": {
+      "min": 1.0,
+      "max": 100.0
+    }
+  },
+  "max_disposal_games": [
+    {
+      "player_name": "Sheezel, Harry",
+      "team": "North Melbourne",
+      "season": 2025,
+      "round_label": "24",
+      "disposals": 54
+    },
+    {
+      "player_name": "Dale, Bailey",
+      "team": "Western Bulldogs",
+      "season": 2025,
+      "round_label": "11",
+      "disposals": 49
+    },
+    {
+      "player_name": "Gulden, Errol",
+      "team": "Sydney",
+      "season": 2026,
+      "round_label": "24",
+      "disposals": 47
+    },
+    {
+      "player_name": "Neale, Lachie",
+      "team": "Brisbane Lions",
+      "season": 2021,
+      "round_label": "Qualifying Final",
+      "disposals": 46
+    },
+    {
+      "player_name": "Serong, Caleb",
+      "team": "Fremantle",
+      "season": 2024,
+      "round_label": "2",
+      "disposals": 46
+    }
+  ],
+  "pct_time_played_out_of_range": 0,
+  "low_time_played_rows": 602
+}

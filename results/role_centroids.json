@@ -1,0 +1,62 @@
+{
+  "Forward": {
+    "hitouts": 1.13,
+    "goals": 1.68,
+    "marks_inside_50": 1.82,
+    "rebound_50s": 0.22,
+    "one_percenters": 1.47,
+    "clearances": 0.6,
+    "inside_50s": 2.07,
+    "contested_marks": 1.02,
+    "tackles": 1.94,
+    "uncontested_possessions": 6.24
+  },
+  "Midfielder": {
+    "hitouts": 0.03,
+    "goals": 0.44,
+    "marks_inside_50": 0.3,
+    "rebound_50s": 1.57,
+    "one_percenters": 1.25,
+    "clearances": 4.61,
+    "inside_50s": 4.15,
+    "contested_marks": 0.17,
+    "tackles": 4.66,
+    "uncontested_possessions": 14.02
+  },
+  "Defender": {
+    "hitouts": 0.18,
+    "goals": 0.05,
+    "marks_inside_50": 0.05,
+    "rebound_50s": 3.73,
+    "one_percenters": 4.9,
+    "clearances": 0.31,
+    "inside_50s": 1.09,
+    "contested_marks": 0.78,
+    "tackles": 1.63,
+    "uncontested_possessions": 9.29
+  },
+  "Ruck": {
+    "hitouts": 24.99,
+    "goals": 0.37,
+    "marks_inside_50": 0.46,
+    "rebound_50s": 0.97,
+    "one_percenters": 3.15,
+    "clearances": 3.6,
+    "inside_50s": 2.14,
+    "contested_marks": 0.96,
+    "tackles": 2.97,
+    "uncontested_possessions": 5.32
+  },
+  "Wing/Utility": {
+    "hitouts": 0.12,
+    "goals": 0.38,
+    "marks_inside_50": 0.32,
+    "rebound_50s": 1.62,
+    "one_percenters": 1.3,
+    "clearances": 1.06,
+    "inside_50s": 2.21,
+    "contested_marks": 0.2,
+    "tackles": 2.4,
+    "uncontested_possessions": 9.96
+  }
+}

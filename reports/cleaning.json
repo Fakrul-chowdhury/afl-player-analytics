@@ -1,0 +1,28 @@
+{
+  "source_conflict_matches": [
+    {
+      "match_id": "051320260823",
+      "season": 2026,
+      "round_label": "25",
+      "home_team": "Essendon",
+      "away_team": "Port Adelaide",
+      "home_goals": 14,
+      "hgoals": 14,
+      "home_behinds": 11,
+      "hbehinds": 11,
+      "home_score": 95,
+      "hscore": 95,
+      "away_goals": 16,
+      "agoals": 16,
+      "away_behinds": 9,
+      "abehinds": 8,
+      "away_score": 105,
+      "ascore": 104
+    }
+  ],
+  "source_conflict_player_rows": 46,
+  "sub_markers_nulled_matches": [
+    "052020250827"
+  ],
+  "sub_markers_nulled_rows": 10
+}
