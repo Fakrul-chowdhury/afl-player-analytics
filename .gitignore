@@ -21,3 +21,6 @@ catboost_info/
 Thumbs.db
 .vscode/
 .idea/
+
+# Local tooling
+.claude/
