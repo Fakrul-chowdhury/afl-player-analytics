@@ -2,7 +2,7 @@
 
 An end-to-end data project on **real AFL data, 2021–2026**. It covers polite data collection, validation against independent sources, leakage-free feature engineering, a time-based comparison of several models against naive baselines, and an interactive dashboard.
 
-**Live dashboard:** _link added after deployment_ (see [Deployment](#deployment))
+**Live dashboard:** https://afl-player-analytics.streamlit.app/
 
 ![Player form page](docs/screenshots/player.png)
 
@@ -178,7 +178,7 @@ docs/                     methodology, README figures and screenshots
 
 ## Deployment
 
-The dashboard runs on **Streamlit Community Cloud** (free). The main file is `app/streamlit_app.py`, and Python dependencies come from `requirements.txt`.
+The dashboard is deployed on **Streamlit Community Cloud** (free) at https://afl-player-analytics.streamlit.app/. The main file is `app/streamlit_app.py`, and Python dependencies come from `requirements.txt`.
 
 ## Licence
 
