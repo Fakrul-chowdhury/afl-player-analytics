@@ -92,7 +92,7 @@ def run() -> dict:
           SELECT season, home_team team, home_score pf, away_score pa FROM matches WHERE regexp_matches(round_label, '^[0-9]+$')
           UNION ALL
           SELECT season, away_team, away_score, home_score FROM matches WHERE regexp_matches(round_label, '^[0-9]+$'))
-        SELECT season, team, sum(CASE WHEN pf > pa THEN 4 WHEN pf = pa THEN 2 ELSE 0 END) pts,
+        SELECT season, team, CAST(sum(CASE WHEN pf > pa THEN 4 WHEN pf = pa THEN 2 ELSE 0 END) AS INTEGER) pts,
                100.0 * sum(pf) / sum(pa) pct
         FROM t GROUP BY 1, 2 QUALIFY row_number() OVER (PARTITION BY season ORDER BY pts DESC, pct DESC) = 1
         ORDER BY 1""").to_dicts()
@@ -196,10 +196,12 @@ def _md(r: dict) -> str:
               f"- Duplicate player-match rows: {r['duplicate_player_match_rows']}; duplicate matches: {r['duplicate_matches']}.",
               f"- Players listed per team-match: {r['players_per_team_match']}.",
               f"- Substitutes activated per team-match: {r['subs_on_per_team_match']}.",
-              f"- Career-games difference between a player's consecutive appearances (top values): {r['career_games_step']} "
-              "(1 = the count includes the current match, so `career_games - 1` is safe as a pre-match feature; larger "
-              "steps are games played before 2021 or outside this window are impossible, so they indicate the player's "
-              "other appearances are within the window — see notes).",
+              f"- Career-games difference between a player's consecutive appearances: {r['career_games_step']} "
+              "(always 1: the published count includes the current match, so `career_games - 1` is used as the "
+              "pre-match feature).",
+              f"- Named substitutes who never took the field (listed with no time-on-ground value and no stats): "
+              f"{r['unused_substitutes']} rows ({r['unused_substitutes_with_any_stat']} with any stat). Kept in "
+              "`player_stats.parquet` with `took_field = false`; excluded from features and modelling.",
               "", "## 6. Nulls", "",
               f"{r['nulls'] or 'No nulls in any column.'}", "",
               "## 7. Ranges and outliers", "",
@@ -211,7 +213,17 @@ def _md(r: dict) -> str:
         "", f"- `pct_time_played` outside 0–100: {r['pct_time_played_out_of_range']}.",
         f"- Rows with under 20% time on ground (mostly substitutes and injuries): {r['low_time_played_rows']:,}. "
         "Kept; time on ground is a model feature via prior-match form, and these rows are flagged in analysis.",
-        "", "## 8. Brownlow votes per match", "",
+        "", "## 8. Discrepancies investigated", "",
+        "- **Essendon v Port Adelaide, 23 Aug 2026 (AFL Tables round 25):** AFL Tables records Port Adelaide 16.9 (105); "
+        "Squiggle records 16.8 (104). AFL Tables is internally consistent (player behinds + rushed behinds = 9) and "
+        "agrees with Port Adelaide FC's published match report (16.9 105 to 14.11 95). AFL Tables value kept; this is the "
+        "single Squiggle mismatch in section 2.",
+        "- **Gold Coast v Essendon, 27 Aug 2025 (Opening Round match postponed by Cyclone Alfred):** AFL Tables marks "
+        "2 substitutions for Gold Coast and 3 for Essendon, while match reports describe one substitute each "
+        "(Rogers for Humphrey; Unwin for Guelfi). Stats are unaffected; the substitution markers are kept as recorded. "
+        "They only influence the `sub_last_match` flag for a handful of players' next match.",
+        "- Finals show 0 Brownlow votes, which is correct: votes are only awarded in home-and-away matches.",
+        "", "## 9. Brownlow votes per match", "",
         "Brownlow votes are recorded for context only and are never used as a model input.", "",
         "| Season | Votes in match | Matches |", "|---|---|---|"]
     lines += [f"| {b['season']} | {b['votes']} | {b['len']} |" for b in r["brownlow_votes_per_match"]]
