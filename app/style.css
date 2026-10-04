@@ -1,0 +1,53 @@
+/* Card-based look inspired by "Analytics Dashboard" by Lindsay (@lho), Figma Community, CC BY 4.0.
+   Colours come from .streamlit/config.toml; the few extra tokens below are set per theme in ui.inject_css(). */
+
+/* ---------- page ---------- */
+[data-testid="stMainBlockContainer"] { padding-top: 2.2rem; padding-bottom: 3rem; max-width: 1480px; }
+[data-testid="stHeader"] { background: transparent; }
+.page-head { border-bottom: 1px solid var(--hairline); padding-bottom: .9rem; margin-bottom: .4rem; }
+.page-head h1 { font-size: 1.55rem; font-weight: 700; margin: 0; padding: 0; letter-spacing: -.01em; }
+.page-head p { color: var(--muted); margin: .25rem 0 0; font-size: .9rem; }
+
+/* ---------- cards: every ui.card() carries a hidden .card-marker ---------- */
+[data-testid="stVerticalBlock"]:has(> [data-testid="stElementContainer"] .card-marker) {
+  background: var(--card); border: 1px solid var(--card-border); border-radius: 16px;
+  box-shadow: var(--shadow); padding: 18px 20px 14px;
+}
+[data-testid="stElementContainer"]:has(.card-marker:empty) { display: none; }
+.card-title { font-size: .9rem; font-weight: 600; color: var(--ink); margin: 0 0 -.35rem; }
+
+/* ---------- KPI tiles (st.metric(border=True)) ---------- */
+div[data-testid="stMetric"][data-testid="stMetric"] {
+  background: var(--card) !important; border: 1px solid var(--card-border) !important;
+  border-radius: 16px !important; box-shadow: var(--shadow); padding: 14px 16px 10px !important; height: 100%;
+}
+[data-testid="stColumn"]:has(> [data-testid="stVerticalBlock"] > [data-testid="stElementContainer"] > [data-testid="stMetric"]) > [data-testid="stVerticalBlock"],
+[data-testid="stColumn"] > [data-testid="stVerticalBlock"] > [data-testid="stElementContainer"]:has(> [data-testid="stMetric"]) { height: 100%; }
+[data-testid="stMetricLabel"] p { color: var(--muted); font-size: .8rem; font-weight: 500; }
+[data-testid="stMetricValue"] { letter-spacing: -.01em; }
+[data-testid="stMetricDelta"] { font-size: .78rem; }
+
+/* ---------- filter bar ---------- */
+.st-key-filter_bar [data-testid="stWidgetLabel"] p { color: var(--muted); font-size: .78rem; font-weight: 500; }
+.st-key-filter_bar [data-baseweb="select"] > div,
+.st-key-filter_bar [data-baseweb="input"] {
+  border-radius: 10px; box-shadow: var(--shadow-sm); background: var(--card);
+}
+
+/* ---------- sidebar navigation ---------- */
+[data-testid="stSidebar"] { box-shadow: var(--shadow-side); }
+[data-testid="stSidebarNavLink"] { border-radius: 10px; padding: .45rem .75rem; margin: 1px 0; }
+[data-testid="stSidebarNavLink"][aria-current="page"] { background: var(--nav-active); }
+[data-testid="stSidebarNavLink"][aria-current="page"] span,
+[data-testid="stSidebarNavLink"][aria-current="page"] p { color: var(--accent) !important; font-weight: 600; }
+[data-testid="stNavSectionHeader"] { color: var(--muted); font-size: .72rem; letter-spacing: .06em;
+  text-transform: uppercase; margin-top: .9rem; }
+
+/* ---------- tabs, tables, expanders ---------- */
+[data-baseweb="tab-list"] { gap: .25rem; }
+[data-baseweb="tab"] { border-radius: 10px 10px 0 0; padding: .35rem .8rem; }
+[data-testid="stExpander"] details { border-radius: 14px; background: var(--card); box-shadow: var(--shadow-sm); }
+[data-testid="stDataFrame"] { border-radius: 12px; overflow: hidden; }
+[data-testid="stMetricValue"] *, [data-testid="stMetricDelta"] *, [data-testid="stMetricLabel"] * {
+  white-space: normal !important; overflow: visible !important; text-overflow: clip !important; }
+[data-testid="stMetricValue"] { line-height: 1.2; }

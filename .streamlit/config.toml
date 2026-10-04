@@ -1,5 +1,55 @@
+# Visual theme inspired by "Analytics Dashboard" by Lindsay (@lho), Figma Community, CC BY 4.0.
+# Colours are adapted, not copied: the chart blue/coral/green were checked for colour-vision-deficiency
+# separation and contrast against both card surfaces (see docs/methodology.md, "Design").
+# Card shadows, KPI tiles and the navigation pill live in app/style.css.
+
 [theme]
-primaryColor = "#2a78d6"
+primaryColor = "#3d6be0"
+font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+headingFont = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+baseFontSize = 14
+baseRadius = "10px"
+showWidgetBorder = true
+showSidebarBorder = false
+metricValueFontSize = "1.45rem"
+metricValueFontWeight = 700
+headingFontWeights = [700, 600, 600, 600, 600, 600]
+headingFontSizes = ["1.6rem", "1.15rem", "1rem", "0.95rem", "0.9rem", "0.85rem"]
+chartCategoricalColors = ["#3d6be0", "#e8603c", "#17a673"]
+
+[theme.light]
+backgroundColor = "#f4f6fa"
+secondaryBackgroundColor = "#ffffff"
+textColor = "#1d2433"
+borderColor = "#e4e8f0"
+dataframeHeaderBackgroundColor = "#f4f6fa"
+linkColor = "#2f5bc9"
+blueColor = "#3d6be0"
+greenColor = "#17a673"
+redColor = "#d9534f"
+
+[theme.light.sidebar]
+backgroundColor = "#ffffff"
+secondaryBackgroundColor = "#eef3fe"
+textColor = "#3a4356"
+borderColor = "#e4e8f0"
+
+[theme.dark]
+backgroundColor = "#11141c"
+secondaryBackgroundColor = "#1c2030"
+textColor = "#e6e9f2"
+borderColor = "#2b3144"
+dataframeHeaderBackgroundColor = "#232839"
+linkColor = "#8fb0ff"
+blueColor = "#6b8ff0"
+greenColor = "#3cc08f"
+redColor = "#f07a6e"
+
+[theme.dark.sidebar]
+backgroundColor = "#161a25"
+secondaryBackgroundColor = "#232b45"
+textColor = "#c9cfdc"
+borderColor = "#2b3144"
 
 [server]
 headless = true

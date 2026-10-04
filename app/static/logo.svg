@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="220" height="40" viewBox="0 0 220 40" role="img" aria-label="AFL Analytics">
+  <g transform="translate(20 20) rotate(-35)">
+    <ellipse rx="15" ry="9.5" fill="#e8603c"/>
+    <path d="M-9 0H9M-5 -3v6M0 -3v6M5 -3v6" stroke="#fff" stroke-width="1.6" stroke-linecap="round"/>
+  </g>
+  <text x="44" y="26" font-family="Inter, Segoe UI, Helvetica, Arial, sans-serif" font-size="17" font-weight="700"
+        letter-spacing="2.5" fill="#3d6be0">AFL ANALYTICS</text>
+</svg>
