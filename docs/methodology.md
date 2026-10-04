@@ -42,3 +42,4 @@ Every rolling feature is computed on matches *before* the one being predicted (`
 - **Model selection:** the model with the lowest RMSE on the 2025 validation season, chosen before the 2026 test season was scored.
 - **Baselines:** the player's last-5-match average, and their season-to-date average. When a player has no history, the baselines fall back to the average debut output in the training data.
 - **Metrics:** RMSE, MAE and R² on the 2026 test matches. Results are also reported by inferred role and for full-match established players.
+- **Prediction intervals (80%):** empirical 10th/90th-percentile residuals of the selected model on 2025, computed within quintiles of the predicted value. Test coverage: 81.9% for disposals, 82.6% for fantasy points.

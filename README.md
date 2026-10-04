@@ -4,7 +4,7 @@ An end-to-end data project on **real AFL data, 2021–2026**. It covers polite d
 
 **Live dashboard:** https://afl-player-analytics.streamlit.app/
 
-![Player form page](docs/screenshots/player.png)
+![Season overview page](docs/screenshots/overview.png)
 
 ## The problem
 
@@ -25,6 +25,7 @@ The dashboard also supports the analyst questions around that:
 
 - **Every model beats both naive baselines** (last-5 average and season-to-date average) on both targets. All three models finish close together, which suggests the remaining error is mostly irreducible match-to-match noise rather than missing model capacity.
 - **The gains hold for every inferred role.** The biggest gain is for forwards: disposals MAE 2.94 vs 3.15, fantasy points MAE 16.5 vs 18.1. Gains also hold for established full-match players only: disposals RMSE 4.79 vs 5.07.
+- **The uncertainty estimates are honest.** The 80% prediction intervals, built from 2025 validation residuals, contain **81.9%** of actual 2026 disposal counts and **82.6%** of fantasy scores. Calibration by prediction decile sits on the diagonal.
 - **What matters most** (permutation importance on unseen 2026 data):
   - The 10-match form average dominates.
   - Season-to-date average and career experience come next.
@@ -104,6 +105,7 @@ scrape (AFL Tables, cached) → parse (selectolax → Parquet) → validate (Duc
   - Refit on 2021–2025, then test on 2026.
 - **Baselines:** the player's last-5-match average and season-to-date average.
 - **Metrics:** RMSE, MAE and R². Also broken down by inferred role and for full-match established players.
+- **Prediction intervals:** the 10th–90th percentiles of the selected model's 2025 validation residuals, taken within quintiles of the predicted value so the band widens for high-output players. Coverage is checked on 2026.
 
 More detail: [`docs/methodology.md`](docs/methodology.md).
 
@@ -111,17 +113,19 @@ More detail: [`docs/methodology.md`](docs/methodology.md).
 
 | Page | What it shows |
 |---|---|
-| **Team insights** | Home-and-away ladder computed from results; per-game team stat comparison; territory chart (inside 50s for vs against) |
-| **Player form** | Per-match values with a 5-match rolling average for any stat; season averages; match log; 2026 out-of-sample predictions vs actual |
-| **Head-to-head** | Player vs player: percentile ranks against the league plus form overlay. Team vs team: meetings, wins, average margin. |
-| **Prediction models** | Test RMSE and MAE for all models vs baselines; predicted vs actual (binned density); error by role |
-| **Feature importance** | Permutation importance on the 2026 test set (with spread over 5 repeats), LightGBM gain and CatBoost importance |
+| **Season overview** | Premiers, minor premiers, scoring, biggest win and crowds; an interactive **ladder race** (position after every round); distribution of winning margins; attendance by venue; how scoring, disposals, tackles and contested ball have changed since 2021 |
+| **Team insights** | Computed ladder; per-game team stat comparison; **team style fingerprint** heatmap (13 stats plus concessions, coloured by standard deviations from the league average); match-by-match margins; territory chart (inside 50s for vs against) |
+| **Player form** | Per-match values with a rolling average and the best game annotated; **percentile profile against players in the same inferred role**; splits by opponent, home/away, result and venue; distribution; 2026 predictions with **80% prediction intervals** |
+| **Head-to-head** | Player vs player: league percentiles, form overlay, consistency box plots, every direct meeting. Team vs team: meetings, wins, margin chart. |
+| **League leaders** | Per-game leaderboard for any stat; home-and-away goal and Brownlow-vote leaders; **player landscape scatter** (any two stats) with an inferred role highlighted |
+| **Prediction models** | Test RMSE/MAE vs baselines; predicted-vs-actual density; **calibration by decile**; error across the season; residual distribution; error by role; the biggest over- and under-performances of 2026 |
+| **Feature importance** | Gain share by feature family; permutation importance on the 2026 test set (with a zoom toggle that hides the dominant feature); LightGBM gain and CatBoost importance |
 | **Data & methodology** | Sources, derived quantities, validation summary |
 
 | | |
 |---|---|
-| ![Team insights](docs/screenshots/teams.png) | ![Head-to-head](docs/screenshots/head_to_head.png) |
-| ![Prediction models](docs/screenshots/models.png) | ![Feature importance](docs/screenshots/importance.png) |
+| ![Team insights](docs/screenshots/teams.png) | ![Player form](docs/screenshots/player.png) |
+| ![League leaders](docs/screenshots/leaders.png) | ![Prediction models](docs/screenshots/models.png) |
 
 ## Stack (and why)
 

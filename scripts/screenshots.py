@@ -5,8 +5,12 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright
 
 OUT = Path(__file__).resolve().parents[1] / "docs" / "screenshots"
-BASE = sys.argv[1] if len(sys.argv) > 1 else "http://localhost:8501"
-PAGES = {"": "teams", "player": "player", "head-to-head": "head_to_head",
+TALL = "--tall" in sys.argv  # review mode: capture whole pages into a separate folder
+args = [a for a in sys.argv[1:] if a != "--tall"]
+BASE = args[0] if args else "http://localhost:8501"
+if TALL:
+    OUT = OUT.parent / "screenshots_full"
+PAGES = {"": "overview", "teams": "teams", "player": "player", "head-to-head": "head_to_head", "leaders": "leaders",
          "models": "models", "importance": "importance", "about": "about"}
 
 
@@ -15,12 +19,12 @@ def main() -> None:
     problems = []
     with sync_playwright() as p:
         browser = p.chromium.launch()
-        page = browser.new_page(viewport={"width": 1440, "height": 1000}, color_scheme="light")
+        page = browser.new_page(viewport={"width": 1440, "height": 4200 if TALL else 1000}, color_scheme="light")
         page.on("console", lambda m: m.type == "error" and problems.append(f"console: {m.text}"))
         for path, name in PAGES.items():
             page.goto(f"{BASE}/{path}")
             page.wait_for_selector("[data-testid='stMainBlockContainer']", timeout=60000)
-            page.wait_for_timeout(7000)
+            page.wait_for_timeout(9000)
             errors = page.locator("[data-testid='stException']").all_inner_texts()
             problems += [f"{path}: {e[:300]}" for e in errors]
             page.screenshot(path=OUT / f"{name}.png", full_page=True)
