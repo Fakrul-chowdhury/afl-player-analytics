@@ -376,7 +376,40 @@
           "depth": 6
         }
       },
-      "selected_model": "Ensemble (mean of 3)"
+      "selected_model": "Ensemble (mean of 3)",
+      "interval_80": {
+        "method": "empirical 10th/90th percentile of 2025 validation residuals, by predicted-value quintile",
+        "test_2026_coverage": 0.8187737928270887,
+        "mean_width": 12.347189238206466,
+        "bin_edges": [
+          10.712473834368495,
+          13.007669665588011,
+          16.15356089166391,
+          20.27046039472031
+        ],
+        "residual_quantiles": {
+          "0": [
+            -5.292024561276503,
+            4.68941638993233
+          ],
+          "1": [
+            -5.311503492285145,
+            5.468499250476462
+          ],
+          "2": [
+            -6.381122052764294,
+            6.180521458152836
+          ],
+          "3": [
+            -6.951788154793304,
+            6.522576325324577
+          ],
+          "4": [
+            -7.024119727275606,
+            7.4842955543775584
+          ]
+        }
+      }
     },
     "fantasy_points": {
       "validation_2025": {
@@ -749,7 +782,40 @@
           "depth": 6
         }
       },
-      "selected_model": "Ensemble (mean of 3)"
+      "selected_model": "Ensemble (mean of 3)",
+      "interval_80": {
+        "method": "empirical 10th/90th percentile of 2025 validation residuals, by predicted-value quintile",
+        "test_2026_coverage": 0.8258865958725706,
+        "mean_width": 55.01297152949183,
+        "bin_edges": [
+          50.87203754510415,
+          59.19584473256898,
+          68.58634754231885,
+          82.1417938390082
+        ],
+        "residual_quantiles": {
+          "0": [
+            -26.84010789587339,
+            24.426723589124165
+          ],
+          "1": [
+            -27.461175607879024,
+            25.62348691802642
+          ],
+          "2": [
+            -27.03305798488138,
+            27.68927090877599
+          ],
+          "3": [
+            -29.480958539608025,
+            28.257353057250917
+          ],
+          "4": [
+            -28.43208430151237,
+            29.13776883373111
+          ]
+        }
+      }
     }
   },
   "rows": {

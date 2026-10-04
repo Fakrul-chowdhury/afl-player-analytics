@@ -6,6 +6,7 @@ test 2026 (scored after the final refit on 2021-2025; never used for tuning or s
 from __future__ import annotations
 
 import json
+import time
 
 import lightgbm as lgb
 import numpy as np
@@ -79,6 +80,9 @@ def fit_target(df: pl.DataFrame, target: str) -> tuple[dict, pl.DataFrame, pd.Da
     ytr, yva, yte, ytrva = (d[target].to_numpy() for d in (tr, va, te, trva))
     tuning, preds_va, preds_te = {}, {}, {}
 
+    t0 = time.monotonic()
+    log = lambda msg: print(f"  [{target}] {msg} ({time.monotonic() - t0:.0f}s)", flush=True)  # noqa: E731
+
     # Ridge: choose alpha on 2025.
     make = ridge()
     scores = {a: np.sqrt(mean_squared_error(yva, make(a).fit(Xtr, ytr).predict(Xva))) for a in (1, 10, 100, 1000, 3000, 10000, 30000)}
@@ -86,6 +90,7 @@ def fit_target(df: pl.DataFrame, target: str) -> tuple[dict, pl.DataFrame, pd.Da
     preds_va["Ridge regression"] = make(alpha).fit(Xtr, ytr).predict(Xva)
     preds_te["Ridge regression"] = make(alpha).fit(Xtrva, ytrva).predict(Xte)
     tuning["Ridge regression"] = {"alpha": alpha}
+    log(f"ridge done, alpha={alpha}")
 
     # LightGBM: early stopping on 2025, then refit on 2021-2025 with the chosen rounds.
     # Small grid over tree complexity, selected on 2025 RMSE.
@@ -99,6 +104,7 @@ def fit_target(df: pl.DataFrame, target: str) -> tuple[dict, pl.DataFrame, pd.Da
                                             callbacks=[lgb.early_stopping(200, verbose=False)])
             rmse = np.sqrt(mean_squared_error(yva, mm.predict(Xva, num_iteration=mm.best_iteration_)))
             fits[(leaves, min_child)] = (rmse, mm, p)
+            log(f"lgbm grid leaves={leaves} min_child={min_child} rmse={rmse:.3f}")
     _, m, lgb_params = min(fits.values(), key=lambda f: f[0])
     best = m.best_iteration_
     preds_va["LightGBM"] = m.predict(Xva, num_iteration=best)
@@ -116,6 +122,7 @@ def fit_target(df: pl.DataFrame, target: str) -> tuple[dict, pl.DataFrame, pd.Da
     preds_va["CatBoost"] = cb.predict(to_cb(Xva))
     cb_final = CatBoostRegressor(**{**cb_params, "iterations": best_cb}).fit(to_cb(Xtrva), ytrva)
     preds_te["CatBoost"] = cb_final.predict(to_cb(Xte))
+    log("catboost done")
     tuning["CatBoost"] = {"iterations": int(best_cb), "learning_rate": 0.05, "depth": 6}
 
     ens = ["Ridge regression", "LightGBM", "CatBoost"]
@@ -148,11 +155,32 @@ def fit_target(df: pl.DataFrame, target: str) -> tuple[dict, pl.DataFrame, pd.Da
                               key=lambda k: metrics(yva[ok_va], preds_va[k][ok_va])["rmse"]),
     }
 
+    # 80% prediction intervals from empirical 2025 residual quantiles of the selected model,
+    # conditioned on the size of the prediction (quintile bins fitted on 2025 predictions).
+    sel = res["selected_model"]
+    pva, pte = preds_va[sel][ok_va], preds_te[sel]
+    edges = np.quantile(pva, [0.2, 0.4, 0.6, 0.8])
+    resid = yva[ok_va] - pva
+    bins_va, bins_te = np.digitize(pva, edges), np.digitize(pte, edges)
+    q = {b: np.quantile(resid[bins_va == b], [0.1, 0.9]) for b in range(5)}
+    lower = pte + np.array([q[b][0] for b in bins_te])
+    upper = pte + np.array([q[b][1] for b in bins_te])
+    inside = (yte >= lower) & (yte <= upper)
+    res["interval_80"] = {
+        "method": "empirical 10th/90th percentile of 2025 validation residuals, by predicted-value quintile",
+        "test_2026_coverage": float(inside[ok_te].mean()),
+        "mean_width": float((upper - lower)[ok_te].mean()),
+        "bin_edges": [float(e) for e in edges],
+        "residual_quantiles": {int(b): [float(v) for v in q[b]] for b in q},
+    }
+
     pred_df = te.select("match_id", "date", "season", "round_label", "player_id", "player_name", "team",
                         "opponent", "role", "sub_status", "games_in_data", "source_conflict",
                         pl.col(target).alias("actual")).with_columns(
-        [pl.Series(k, v.astype(float)) for k, v in preds_te.items()]).with_columns(target=pl.lit(target))
+        [pl.Series(k, v.astype(float)) for k, v in preds_te.items()]).with_columns(
+        target=pl.lit(target), pi_lower=pl.Series(lower.astype(float)), pi_upper=pl.Series(upper.astype(float)))
 
+    log("predictions and intervals done")
     gain = pd.Series(lgbm.booster_.feature_importance("gain"), index=FEATURES)
     perm = permutation_importance(lgbm, Xte[ok_te], yte[ok_te], n_repeats=5, random_state=SEED,
                                   scoring="neg_root_mean_squared_error")
@@ -161,6 +189,7 @@ def fit_target(df: pl.DataFrame, target: str) -> tuple[dict, pl.DataFrame, pd.Da
                         "permutation_std": perm.importances_std,
                         "catboost_importance": cb_final.get_feature_importance() / 100})
     imp["target"] = target
+    log("permutation importance done")
     return res, pred_df, imp
 
 
