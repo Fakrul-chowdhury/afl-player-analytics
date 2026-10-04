@@ -6,6 +6,8 @@ An end-to-end data project on **real AFL data, 2021–2026**. It covers polite d
 
 ![Season overview page](docs/screenshots/overview.png)
 
+<sub>UI inspired by [Analytics Dashboard by Lindsay (@lho)](https://www.figma.com/@lho), Figma Community, [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/). Light and dark themes; dark mode shown in [`docs/screenshots/overview_dark.png`](docs/screenshots/overview_dark.png).</sub>
+
 ## The problem
 
 Can we predict how many **disposals** and **AFL Fantasy points** a player will record in their *next* match, using only what is known before the bounce? And how much better than "just use their recent average" can we do?
@@ -14,7 +16,9 @@ The dashboard also supports the analyst questions around that:
 
 - Which teams win the territory battle?
 - How is a player's form trending?
-- How do two players compare against the league?
+- How do two players compare against the league, and who plays most like whom?
+- Which teams are strongest right now (Elo), and which stats go with winning?
+- Why did the model predict *that* for this player in this match?
 
 ## Key results (2026 season, held-out test set: 9,982 player-matches)
 
@@ -89,7 +93,7 @@ Full report: [`reports/VALIDATION.md`](reports/VALIDATION.md) (machine-readable:
 ```
 scrape (AFL Tables, cached) → parse (selectolax → Parquet) → validate (DuckDB SQL vs Squiggle & internal totals)
   → clean (rule-based flags) → features (Polars, strictly pre-match) → train (Ridge / LightGBM / CatBoost)
-  → figures + Streamlit dashboard
+  → explain (LightGBM contributions) → figures + Streamlit dashboard
 ```
 
 - **Dataset:** 1,280 matches, 58,880 player-match rows, 1,124 players. 58,480 rows are used for modelling (players who took the field).
@@ -111,21 +115,35 @@ More detail: [`docs/methodology.md`](docs/methodology.md).
 
 ## Dashboard pages
 
-| Page | What it shows |
-|---|---|
-| **Season overview** | Premiers, minor premiers, scoring, biggest win and crowds; an interactive **ladder race** (position after every round); distribution of winning margins; attendance by venue; how scoring, disposals, tackles and contested ball have changed since 2021 |
-| **Team insights** | Computed ladder; per-game team stat comparison; **team style fingerprint** heatmap (13 stats plus concessions, coloured by standard deviations from the league average); match-by-match margins; territory chart (inside 50s for vs against) |
-| **Player form** | Per-match values with a rolling average and the best game annotated; **percentile profile against players in the same inferred role**; splits by opponent, home/away, result and venue; distribution; 2026 predictions with **80% prediction intervals** |
-| **Head-to-head** | Player vs player: league percentiles, form overlay, consistency box plots, every direct meeting. Team vs team: meetings, wins, margin chart. |
-| **League leaders** | Per-game leaderboard for any stat; home-and-away goal and Brownlow-vote leaders; **player landscape scatter** (any two stats) with an inferred role highlighted |
-| **Prediction models** | Test RMSE/MAE vs baselines; predicted-vs-actual density; **calibration by decile**; error across the season; residual distribution; error by role; the biggest over- and under-performances of 2026 |
-| **Feature importance** | Gain share by feature family; permutation importance on the 2026 test set (with a zoom toggle that hides the dominant feature); LightGBM gain and CatBoost importance |
-| **Data & methodology** | Sources, derived quantities, validation summary |
+Eleven pages in five sidebar sections. Every chart has tooltips and a short caption explaining how it was computed.
+
+| Section | Page | What it shows |
+|---|---|---|
+| League | **Season overview** | KPI tiles (premiers, minor premiers, scoring and crowd trends as sparklines); an interactive **ladder race**; winning margins; attendance by venue; how the game has changed since 2021 |
+| League | **League leaders** | Per-game leaderboard for any stat; home-and-away goal and Brownlow-vote leaders; **player landscape scatter** by inferred role; CSV download |
+| Teams | **Team insights** | Computed ladder; team stat comparison; **team style fingerprint** heatmap; match-by-match margins; territory chart |
+| Teams | **Team strength (Elo)** *(new)* | An **Elo rating** computed from every result since 2021 (settings tuned on 2022–24; 70.7% of 2025–26 matches tipped correctly vs 57.4% for "always the home team"); **home-ground advantage by team** with 95% confidence intervals |
+| Teams | **What wins games** *(new)* | Correlation of every team-stat difference with the final margin, plus a per-match scatter with a fitted line for any stat |
+| Players | **Player form** | Form trend, role-peer percentiles and splits, plus new tabs: **form calendar** (rounds × seasons), **league spread** (player highlighted among every player, per stat), **age curve** (league average by age with the player's path), **with / without** (team win rate and margin with vs without the player), 2026 predictions with 80% intervals, season log |
+| Players | **Similar players** *(new)* | A 2-D **similarity map** (PCA of standardised per-game stats) and the ten **players most like** the selected one |
+| Players | **Head-to-head** | Player vs player (percentiles, form overlay, consistency, direct meetings) and team vs team |
+| Models | **Prediction models** | Test RMSE/MAE vs baselines; predicted vs actual; calibration by decile; error by round and role; biggest surprises |
+| Models | **Why this prediction?** *(new)* | A **waterfall** of LightGBM's own per-feature contributions (TreeSHAP, `pred_contrib`) for any 2026 player-match, from the average prediction to the final number, plus what drives that player's predictions across the season |
+| Models | **Feature importance** | Gain share by feature family; permutation importance on 2026 |
+| About | **Data & methodology** | Sources, derived quantities, validation summary, design notes |
 
 | | |
 |---|---|
+| ![Team strength](docs/screenshots/team_strength.png) | ![Why this prediction?](docs/screenshots/explain.png) |
+| ![Similar players](docs/screenshots/similar.png) | ![What wins games](docs/screenshots/what_wins.png) |
 | ![Team insights](docs/screenshots/teams.png) | ![Player form](docs/screenshots/player.png) |
 | ![League leaders](docs/screenshots/leaders.png) | ![Prediction models](docs/screenshots/models.png) |
+
+### Design
+
+The look (light grey canvas, white rounded cards with soft shadows, KPI tiles, a filter bar and a sidebar with a highlighted active item) is **inspired by [Analytics Dashboard by Lindsay (@lho)](https://www.figma.com/@lho), Figma Community, licensed [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)**. It is implemented with Streamlit theming (`.streamlit/config.toml`, separate light and dark themes) plus a small stylesheet (`app/style.css`) and layout helpers (`app/ui.py`).
+
+The design's chart colours were **adapted and validated rather than copied**: blue `#3d6be0`, coral `#e8603c` and green `#17a673` pass colour-vision-deficiency separation, lightness, chroma and ≥ 3:1 contrast checks on both the light and the dark card surface (details in [`docs/methodology.md`](docs/methodology.md#design)).
 
 ## Stack (and why)
 
@@ -138,6 +156,7 @@ More detail: [`docs/methodology.md`](docs/methodology.md).
 | **scikit-learn** | Ridge baseline model, preprocessing pipelines, k-means role inference, permutation importance |
 | **LightGBM** | Fast gradient boosting with native categorical support |
 | **CatBoost** | Gradient boosting with ordered target statistics for high-cardinality categoricals (team, opponent, venue) |
+| **NumPy** | PCA for the similarity map (SVD) and the Elo grid search, without adding dependencies |
 | **Streamlit + Altair** | Pure-Python interactive dashboard, with Altair charts declared exactly; the same chart code exports the README figures (via vl-convert) |
 
 ## Limitations (honest summary)
@@ -147,6 +166,8 @@ More detail: [`docs/methodology.md`](docs/methodology.md).
 - **Team selection is assumed known.** Predictions are made for players who actually played. A real pre-game system would also need to handle late changes and the named substitute, whose minutes are uncertain.
 - **Test-set use.** All tuning and model selection used 2025 only. The 2026 test set was scored twice during development: once for the initial three models, then again after adding the LightGBM grid, a wider Ridge alpha range (alpha had hit the edge of the first grid on validation) and the ensemble. The selected model and its rank did not depend on 2026, but this is disclosed for transparency.
 - **Coverage starts in 2021.** Rolling features for early-2021 matches have shorter histories, and pre-2021 career form is not used apart from career games played.
+- **Match momentum charts were not built.** They need the scoring progression inside the raw AFL Tables match pages; the processed tables hold only final scores, and the raw cache was not available when the dashboard was extended. Nothing was approximated in its place.
+- **The new analyses are descriptive.** Elo uses results only (no margins or travel); home advantage uses the designated home team; "what wins games" and "with / without" show associations, not causes; age curves are a six-season cross-section.
 - **Single primary source** for player stats. It is cross-checked against Squiggle for scores and against its own team totals, but player-level stats have no second free source to compare against.
 
 ## How to run
@@ -162,7 +183,7 @@ python scripts/run_pipeline.py
 # Or step by step:
 set PYTHONPATH=src                # macOS/Linux: export PYTHONPATH=src
 python -m afl.scrape && python -m afl.parse && python -m afl.validate && python -m afl.clean
-python -m afl.features && python -m afl.train && python -m afl.figures
+python -m afl.features && python -m afl.train && python -m afl.explain && python -m afl.figures
 
 # Dashboard (only needs requirements.txt plus the committed data/processed files)
 streamlit run app/streamlit_app.py
@@ -171,8 +192,10 @@ streamlit run app/streamlit_app.py
 ## Repository layout
 
 ```
-app/streamlit_app.py      Streamlit dashboard (6 pages)
-src/afl/                  scrape · parse · squiggle · validate · clean · features · train · charts · figures
+app/streamlit_app.py      Streamlit entry point and navigation (11 pages)
+app/views/                pages: league · teams · players · models
+app/common.py, ui.py      shared queries; card / KPI / filter-bar helpers (style.css, static/logo.svg)
+src/afl/                  scrape · parse · squiggle · validate · clean · features · train · explain · insights · charts · figures
 scripts/                  run_pipeline.py, screenshots.py
 data/processed/           Parquet tables used by the dashboard (raw HTML cache is git-ignored)
 reports/                  VALIDATION.md, validation.json, cleaning.json

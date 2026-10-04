@@ -43,3 +43,42 @@ Every rolling feature is computed on matches *before* the one being predicted (`
 - **Baselines:** the player's last-5-match average, and their season-to-date average. When a player has no history, the baselines fall back to the average debut output in the training data.
 - **Metrics:** RMSE, MAE and R² on the 2026 test matches. Results are also reported by inferred role and for full-match established players.
 - **Prediction intervals (80%):** empirical 10th/90th-percentile residuals of the selected model on 2025, computed within quintiles of the predicted value. Test coverage: 81.9% for disposals, 82.6% for fantasy points.
+
+### Explaining individual predictions ("Why this prediction?")
+
+- `afl.explain` refits the final LightGBM for each target with exactly the hyperparameters stored in `results/metrics.json` (same features, same 2021–2025 rows, same seed). Before saving anything it checks that the refit reproduces the LightGBM predictions already in `predictions.parquet`; the maximum difference is 0.0 for both targets, so **no model result changes**.
+- Contributions come from LightGBM's built-in `pred_contrib=True` (TreeSHAP); no extra library is used. For every 2026 prediction, base value + contributions = the LightGBM prediction.
+- To keep the deployed app small, each prediction stores its 12 largest contributions plus one row holding the exact sum of the other 56, so the waterfall still adds up.
+- The headline model is the ensemble; only its LightGBM member is explained, and the page says so. Contributions describe what the model relied on, not what caused the result.
+
+### Team strength (Elo) and home-ground advantage
+
+- **Elo** is computed from every result (win = 1, draw = 0.5, loss = 0) in date order. Every team starts at 1,500 in round 1, 2021. Expected result = 1 / (1 + 10^(−(home − away + HGA)/400)); after each match the winner takes K × (result − expected) from the loser. Between seasons each rating keeps a fraction of its distance from 1,500.
+- **K, the home bonus and the carry-over** were chosen by grid search (K 20–60, home bonus 0–120, carry-over 0.5–1.0) to minimise the Brier score on 2022–2024 (2021 is burn-in). Chosen: K = 40, home bonus = 60 Elo points, carry-over = 70%; the home-bonus optimum is inside the grid, not at its edge.
+- **Out of sample (2025–2026, 434 matches):** Elo tips 70.7% of decided matches correctly vs 57.4% for always tipping the home team; Brier score 0.185 (0.25 = coin flip).
+- **Home-ground advantage by team** = (average margin as the designated home team − average margin as the away team) ÷ 2, home-and-away rounds, with a 95% confidence interval from the standard error of the two means. "Home" is AFL Tables' designated home team, so shared grounds and relocated fixtures dilute the effect; most intervals overlap.
+- The one match with a cross-source score conflict has the same winner in both sources, so Elo is unaffected; it is excluded from the margin-based analyses.
+
+### What wins games
+
+- One row per match (home minus away, so no match is double-counted), using the team totals printed on each AFL Tables match page.
+- For every stat: Pearson correlation between the stat difference and the final margin, the least-squares slope (points of margin per unit of difference) and how often the team ahead on the stat won.
+- Goals, behinds, rushed behinds and Brownlow votes are excluded because they *are* the score or are awarded after it. The results are associations, not causes (for example, rebound 50s correlate negatively because the team under pressure defends more).
+
+### Player-level views
+
+- **Similarity map:** per-game averages on 16 stats (fantasy points excluded because it is a weighted sum of the others) for players with at least N games in the chosen seasons, standardised, then projected onto the first two principal components with a NumPy SVD. "Most similar" uses Euclidean distance across all 16 standardised stats, not the 2-D picture; similarity = 1 / (1 + distance).
+- **League spread:** every qualifying player's per-game average as a dot, one row per stat with its own scale. Vertical position is fixed random jitter with no meaning.
+- **Age curves:** league mean and interquartile range of single-match output by whole year of age (ages with at least 150 player-matches), with the player's average at each age overlaid. Six seasons is a cross-section, not a career curve, and older ages contain only the survivors.
+- **Form calendar:** a season × round grid coloured by the player's output. Qualifying and elimination finals share a column (same week). Rounds the player missed are drawn as empty dashed cells and nothing is filled in.
+- **With / without:** for each season in which the player played at least once for their main club, the club's win rate and average margin in matches with and without them. Descriptive only: absences coincide with injuries, opposition and form, and samples without a regular player are often tiny.
+
+### Not built: match momentum
+
+Match momentum charts need the quarter-by-quarter scoring progression from the AFL Tables match pages. The processed tables store only final scores and player totals, and the raw HTML cache (`data/raw/`, git-ignored) was not available in the environment used for this update, so this view was not built rather than approximated. It can be added by extending `afl.parse` to read the scoring-progression table from the cached pages.
+
+### Design
+
+- The UI is inspired by [Analytics Dashboard by Lindsay (@lho)](https://www.figma.com/@lho), Figma Community, [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/): light grey canvas, white rounded cards with soft shadows, KPI tiles with sparklines, a filter bar, and a sidebar with a highlighted active item. Colours, type and spacing live in `.streamlit/config.toml` (separate light and dark themes) and `app/style.css`; layout helpers are in `app/ui.py`.
+- **Chart colours were adapted, not copied.** The design's blue, orange-red and green were re-stepped to `#3d6be0`, `#e8603c` and `#17a673` and checked with a palette validator (OKLab lightness band, chroma floor, colour-vision-deficiency separation for every pair, normal-vision separation, and ≥ 3:1 contrast). All checks pass on both card surfaces (`#ffffff` light, `#1c2030` dark). The worst CVD pair (green vs coral, ΔE 8.7 deutan) is never the only cue: legends, labels and position always carry the meaning too.
+- Diverging scales run coral → neutral grey → blue; sequential scales use one hue, light to dark, with separate steps for dark mode.
